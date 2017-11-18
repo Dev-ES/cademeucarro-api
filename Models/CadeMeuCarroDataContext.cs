@@ -11,5 +11,6 @@ namespace cademeucarro_api.Models
         }
         
         public DbSet<Car> Cars { get; set; }
+        public DbSet<TrackCar> Tracks { get; set; }
     }
 }

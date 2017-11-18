@@ -11,9 +11,10 @@ using System;
 namespace cademeucarroapi.Migrations
 {
     [DbContext(typeof(CadeMeuCarroDataContext))]
-    partial class CadeMeuCarroDataContextModelSnapshot : ModelSnapshot
+    [Migration("20171118203756_TrackCarMigration")]
+    partial class TrackCarMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

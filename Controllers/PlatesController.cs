@@ -25,10 +25,8 @@ namespace cademeucarro_api.Controllers
         public async Task<ActionResult> SearchPlate([FromQuery]string plate = "")
         {
             var sinespSearch = await SinespSearch(plate);
-            
-            var searchResult = await _context.Cars
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Plate == plate);
+
+            var searchResult = await GetCarByPlate(plate);
 
             if (searchResult != null)
             {
@@ -39,7 +37,7 @@ namespace cademeucarro_api.Controllers
             return Ok(sinespSearch);
         }
 
-        private async Task<SearchResult> SinespSearch(string plate) 
+        private async Task<SearchResult> SinespSearch(string plate)
         {
             const string sinespUrl = "http://18.231.13.29:3000/api/plate";
             using (var client = new HttpClient())
@@ -48,6 +46,20 @@ namespace cademeucarro_api.Controllers
                 var data = JsonConvert.DeserializeObject<SearchResult>(result);
                 return data;
             }
+        }
+
+        private async Task<Car> GetCarByPlate(string plate)
+        {
+            if (string.IsNullOrEmpty(plate))
+            {
+                return null;
+            }
+
+            var searchResult = await _context.Cars
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Plate == plate);
+
+            return searchResult;
         }
 
         [HttpPost, Route("add")]
@@ -64,6 +76,25 @@ namespace cademeucarro_api.Controllers
             }
 
             return Ok(new { sucess = true });
+        }
+
+        [HttpPost, Route("track")]
+        public async Task<ActionResult> TrackCar([FromBody]TrackCarRequest trackRequest)
+        {
+            var car = await GetCarByPlate(trackRequest.Plate);
+            var track = new TrackCar
+            {
+                CarId = car?.Id,
+                Plate = trackRequest.Plate,
+                Lat = trackRequest.Lat,
+                Long = trackRequest.Long,
+                CameraId = trackRequest.Camera,
+                TrackedAt = DateTime.UtcNow
+            };
+            _context.Tracks.Add(track);
+            await _context.SaveChangesAsync();
+
+            return Ok(track.Id);
         }
     }
 }
