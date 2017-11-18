@@ -48,6 +48,6 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               docker build -t cademeucarro-api .
               docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-              docker tag cademeucarro-api $DOCKER_USER/cademeucarro-api:latest
-              docker push $DOCKER_USER/cademeucarro-api
+              docker tag cademeucarro-api cademeucarro/cademeucarro-api:latest
+              docker push cademeucarro/cademeucarro-api
             fi
