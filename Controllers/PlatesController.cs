@@ -18,12 +18,27 @@ namespace cademeucarro_api.Controllers
         }
         
         // GET api/values
-        [HttpGet, Route("search")]
-        public ActionResult SearchPlate()
+        [HttpGet, Route("search/{plate?}")]
+        public ActionResult SearchPlate(string plate = "")
         {
-            return Ok(new {
-                stolen = false
-            });
+            var searchResult = _context.Cars.Where(x => x.Plate == plate).OrderByDescending(x => x.Id).LastOrDefault();
+            if (searchResult == null) {
+                return Ok(new { stolen = "undefined"});
+            }
+            return Ok(new { stolen = searchResult.IsStolen, stolenOn = searchResult.StolenOn });
+        }
+
+        [HttpPost, Route("add")]
+        public async Task<ActionResult> NewCar([FromBody] Car car) {
+            try {
+                _context.Cars.Add(car);
+                await _context.SaveChangesAsync();
+            } catch
+            {
+                return BadRequest(new { sucess = true });
+            }
+            
+            return Ok(new { sucess = true });
         }
     }
 }
