@@ -1,0 +1,53 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/repo
+    docker:
+      - image: microsoft/dotnet
+    environment:
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    steps:
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          key: cademuecarro-api-{{ .Branch }}-{{ checksum "cademeucarro-api.csproj" }}          
+      - run: 
+          name: Restore Dependencies
+          command: dotnet restore -s https://api.nuget.org/v3/index.json -s https://dotnet.myget.org/F/aspnetwebstack-dev/api/v3/index.json
+      - run: 
+          name: Build Solution
+          command: dotnet build
+      # - run: 
+      #     name: Integration Tests
+      #     working_directory: test/ContactManager.Api.IntegrationTests
+      #     command: dotnet xunit
+      - run:
+          name: Publish Artifacts
+          command: dotnet publish --configuration Release
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.09.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - run:
+          name: List After
+          command: ls -la
+      - save_cache:
+          key: cademuecarro-api-{{ .Branch }}-{{ checksum "cademeucarro-api.csproj" }}
+          paths:
+            - ~/.nuget
+      - store_artifacts:
+          path: bin/Release/netcoreapp2.0/publish/
+      - deploy:
+          name: Deploy production
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              docker build -t cademeucarro-api .
+              docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+              docker tag cademeucarro-api $DOCKER_USER/cademeucarro-api:latest
+              docker push $DOCKER_USER/cademeucarro-api
+            fi
