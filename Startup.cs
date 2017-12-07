@@ -39,8 +39,14 @@ namespace cademeucarro_api
                     opts.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             }
 
+            services.AddCors(opts => {
+                opts.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
+
             services.AddMvc();
-            services.AddCors();
 
             // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>
@@ -67,10 +73,7 @@ namespace cademeucarro_api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors(opts => opts.AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-            );
+            app.UseCors("CorsPolicy");
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
