@@ -40,6 +40,7 @@ namespace cademeucarro_api
             }
 
             services.AddMvc();
+            services.AddCors();
 
             // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>
@@ -65,6 +66,11 @@ namespace cademeucarro_api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(opts => opts.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+            );
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
