@@ -1,4 +1,4 @@
-namespace cademeucarro_api.ViewModels
+namespace CademeucarroApi.ViewModels
 {
     public class TrackCarRequest
     {

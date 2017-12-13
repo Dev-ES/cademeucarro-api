@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using cademeucarro_api.Models;
-using cademeucarro_api.ViewModels;
+using CademeucarroApi.Models;
+using CademeucarroApi.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
-namespace cademeucarro_api.Controllers
+namespace CademeucarroApi.Controllers
 {
     [Route("plates")]
     public class PlatesController : Controller

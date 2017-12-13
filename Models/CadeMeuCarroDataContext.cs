@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace cademeucarro_api.Models
+namespace CademeucarroApi.Models
 {
     public class CadeMeuCarroDataContext : DbContext
     {

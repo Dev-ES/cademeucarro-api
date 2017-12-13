@@ -1,6 +1,6 @@
 using System;
 
-namespace cademeucarro_api.Models
+namespace CademeucarroApi.Models
 {
     public class TrackCar
     {
