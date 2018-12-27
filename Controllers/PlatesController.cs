@@ -22,6 +22,7 @@ namespace CademeucarroApi.Controllers
         [HttpGet, Route("search")]
         public async Task<ActionResult> SearchPlate([FromQuery]string plate = "")
         {
+            plate = plate.ToUpperInvariant();
             var sinespSearch = await SinespSearch(plate);
 
             var searchResult = await GetCarByPlate(plate);
@@ -55,7 +56,7 @@ namespace CademeucarroApi.Controllers
 
             var searchResult = await _context.Cars
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Plate == plate);
+                .FirstOrDefaultAsync(x => x.Plate.ToUpperInvariant() == plate);
 
             return searchResult;
         }
@@ -65,6 +66,7 @@ namespace CademeucarroApi.Controllers
         {
             try
             {
+                car.Plate = car.Plate.ToUpperInvariant();
                 _context.Cars.Add(car);
                 await _context.SaveChangesAsync();
             }
@@ -79,7 +81,7 @@ namespace CademeucarroApi.Controllers
         [HttpPost, Route("track")]
         public async Task<ActionResult> TrackCar([FromBody]TrackCarRequest trackRequest)
         {
-            var car = await GetCarByPlate(trackRequest.Plate);
+            var car = await GetCarByPlate(trackRequest.Plate.ToUpperInvariant());
             var track = new TrackCar
             {
                 CarId = car?.Id,
